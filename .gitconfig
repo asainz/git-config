@@ -1,0 +1,131 @@
+# many configurations taken from https://kittygiraudel.com/snippets/git-config/
+
+[color]
+  # Enable colors in color-supporting terminals
+  ui = true
+
+[alias]
+	st = status
+	c = commit
+	b = branch
+	co = checkout
+	coall = "checkout -- ."
+	trim = !git remote prune origin && git gc
+    cleanup = !git clean -df && git stash clear
+    clear = git coall && git clean -f -d
+	diffc = diff --cached
+	diffst = diff --stat
+	logp = log --pretty=nice --date-order
+	fix = commit --amend --no-edit
+
+	# Switch to a branch, creating it if necessary.
+	go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
+
+	# Show verbose output about tags, branches or remotes
+	tags = tag -l
+	branches = branch --all
+	remotes = remote --verbose
+
+	# Remove branches that have already been merged with main.
+	deletemerged = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+	# Show the user email for the current repository.
+	whoami = config user.email
+
+	fix = commit --amend --no-edit
+	abort = checkout -- .
+	wait = reset HEAD
+	undo = reset --soft HEAD^
+	changes = diff --name-status
+	
+[pretty]
+	nice = "%C(yellow)%h%C(reset) %C(white)%s%C(cyan)%d%C(reset) -- %an; %ar"
+
+[apply]
+
+	# Detect whitespace errors when applying a patch.
+	whitespace = fix
+
+[branch]
+
+	# Show most recently changed branches first.
+	sort = -committerdate
+
+[core]
+    pager = diff-so-fancy | less --tabs=4 -RFX
+	# Use custom `.gitignore` and `.gitattributes`.
+	excludesfile = ~/.gitignore
+	attributesfile = ~/.gitattributes
+	editor = code --wait
+    # Don’t consider trailing space change as a cause for merge conflicts
+    whitespace = -trailing-space
+
+[diff]
+    # Use better, descriptive initials (c, i, w) instead of a/b.
+    mnemonicPrefix = true
+    # Show renames/moves as such
+    renames = true
+    # Display submodule-related information (commit listings)
+    submodule = log
+    # Use VSCode as default diff tool when running `git difftool`
+    tool = vscode
+
+[pull]
+	rebase = true
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+  
+[init]
+	defaultBranch = main
+
+[log]
+    # Use abbrev SHAs whenever possible/relevant instead of full 40-chars
+    abbrevCommit = true
+    # Disable decorate for reflog
+    decorate = false
+    # Automatically --follow when given a single path
+    follow = true
+
+
+# Custom/dedicated merge drive for npm lock files (`package-lock.json`)
+# See https://www.npmjs.com/package/npm-merge-driver
+[merge "npm-merge-driver"]
+    name = automatically merge npm lockfiles
+    driver = npx npm-merge-driver merge %A %O %B %P
+
+[push]
+    default = current
+    # When pushing, also push tags whose commit-ishs are now reachable upstream
+    followTags = true
+
+[rebase]
+    # Automatically stash current WD and stage when running rebase
+    autoStash = true
+
+[status]
+    # Recursively traverse untracked directories to display all contents
+    showUntrackedFiles = all
+    # Display submodule rev change summaries in status
+    submoduleSummary = true
+
+[tag]
+    # Sort tags as version numbers whenever applicable
+    sort = version:refname
+
+[transfer]
+    fsckobjects = true
+
+[versionsort]
+    prereleaseSuffix = -pre
+    prereleaseSuffix = .pre
+    prereleaseSuffix = -beta
+    prereleaseSuffix = .beta
+    prereleaseSuffix = -rc
+    prereleaseSuffix = .rc
+
+
+[pager]
+    difftool = true
